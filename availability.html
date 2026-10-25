@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Blood Availability{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Blood Availability</h1>
+  <a class="btn btn-primary" href="{% url 'bank:request_add' %}">Request Blood</a>
+</div>
+
+<div class="group-grid">
+  {% for s in stock %}
+  <div class="group-card level-{{ s.level }}">
+    <div class="group-name">{{ s.blood_group }}</div>
+    <div class="group-units">{{ s.units }} unit{{ s.units|pluralize }}</div>
+    <div class="group-tag">{% if s.level == "out" %}Not available{% elif s.level == "low" %}Low stock{% else %}Available{% endif %}</div>
+    <a class="card-link" href="{% url 'bank:stock_edit' s.pk %}">Update stock</a>
+  </div>
+  {% endfor %}
+</div>
+<p class="note">Low stock means 5 units or fewer. Stock reduces automatically when a request is marked Fulfilled.</p>
+{% endblock %}

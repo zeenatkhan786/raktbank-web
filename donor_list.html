@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Donors{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Donors</h1>
+  <a class="btn btn-primary" href="{% url 'bank:donor_add' %}">+ Register Donor</a>
+</div>
+
+<form method="get" class="filter-bar">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search by name, city or phone">
+  <select name="group">
+    <option value="">All blood groups</option>
+    {% for code, label in groups %}
+      <option value="{{ code }}" {% if code == group %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-primary" type="submit">Search</button>
+  <a class="btn btn-outline" href="{% url 'bank:donor_list' %}">Reset</a>
+</form>
+
+{% if donors %}
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Name</th><th>Group</th><th>Age</th><th>City</th><th>Phone</th><th>Last donation</th><th>Available</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+  {% for d in donors %}
+    <tr>
+      <td>{{ d.name }}</td>
+      <td><span class="pill">{{ d.blood_group }}</span></td>
+      <td>{{ d.age }}</td>
+      <td>{{ d.city }}</td>
+      <td>{{ d.phone }}</td>
+      <td>{{ d.last_donation|date:"d M Y"|default:"-" }}</td>
+      <td>{% if d.is_available %}<span class="status status-approved">Yes</span>{% else %}<span class="status status-rejected">No</span>{% endif %}</td>
+      <td class="actions">
+        <a href="{% url 'bank:donor_edit' d.pk %}">Edit</a>
+        <a href="{% url 'bank:donor_delete' d.pk %}" class="danger">Delete</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">No donors found.</p>
+{% endif %}
+{% endblock %}
